@@ -1,115 +1,135 @@
 package tools;
 
-import daos.DepartmentDAO;
+import daos.EmployeeDAO;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import models.Department;
+import models.Employee;
 
-public class DepartmentCRUD implements CRUD {
+public class EmployeeCRUD implements CRUD {
 
     DbConnection connection = new DbConnection();
-    DepartmentDAO ddao = new DepartmentDAO(connection.getConncetion());
+    EmployeeDAO edao = new EmployeeDAO(connection.getConncetion());
     Scanner scan = new Scanner(System.in);
-    List<String> departmentListsStr = new ArrayList<>();
-    List<Integer> departmentListsInt = new ArrayList<>();
+    List<String> employeeListsStr = new ArrayList<>();
+    List<Integer> employeeListsInt = new ArrayList<>();
+    
+     public void ListOfEmployees(){
+        edao.getAll().forEach((i) -> employeeListsStr.add(i.getEmail() + i.getPhoneNumber()));
+        edao.getAll().forEach((i) -> employeeListsInt.add(i.getEmployeeId())); 
+     }
 
-    public void ListOfDepartments() {
-        ddao.getAll().forEach((i) -> departmentListsStr.add(i.getDepartmentName()));
-        ddao.getAll().forEach((i) -> departmentListsInt.add(i.getDepartmenId()));
-    }
-     
     @Override
     public void show() {
-       System.out.println("Department ID -- Department Name -- manager ID -- location ID");
-       for (Department department : ddao.getAll()) {
-           System.out.println(department.getDepartmenId() + " -- " + department.getDepartmentName() + " -- "
-           + department.getManagerId() + " -- " + department.getLocationId());
+       System.out.println("id -- first_name -- last_name --  email -- phone_number - hire_date -- job -- salary -- comission_pct -- manager -- department");
+       for (Employee employee : edao.getAll()) {
+           System.out.println(employee.getEmployeeId() + " -- " + employee.getFirstName() + " -- " + employee.getLastName() + " -- "
+           + employee.getEmail() + " -- " + employee.getPhoneNumber() + " -- " + employee.getHireDate() + " -- "
+           + employee.getJobTitle() + " -- " + employee.getSalary() + " -- "+ employee.getCommissionPCT() + " -- "
+           + employee.getCommissionPCT() + " -- " + employee.getManagerId() + " -- " + employee.getDepartmentId());;
        }
     }
 
     @Override
     public void insert() {
-        System.out.print("Insert new ID: ");
-        int departmentId_Insert = scan.nextInt();
+        System.out.print("Insert Employee ID: ");
+        int employeeId_Insert = scan.nextInt();
         scan.nextLine();
-        System.out.print("Insert new Department Name: ");
-        String departmentname_Insert = scan.nextLine();
-        System.out.print("Insert new Manager ID: ");
+        System.out.print("Insert first name: ");
+        String firstName_Insert = scan.nextLine();
+        System.out.print("Insert last name: ");
+        String lastName_Insert = scan.nextLine();
+        System.out.print("Insert emai: ");
+        String email_Insert = scan.nextLine();
+        System.out.print("Insert phone number: ");
+        String phoneNumber_Insert = scan.nextLine();
+        System.out.print("Insert hire date(yyyy-MM-dd): ");
+        String hireDate_Insert = scan.nextLine();
+        Date hireDateSQLFormat = Date.valueOf(hireDate_Insert);
+        System.out.print("Insert Job ID: ");
+        String jobTitle_Insert = scan.nextLine();
+        System.out.print("Insert salary: ");
+        double salary_Insert = scan.nextDouble();
+        scan.nextLine();
+        System.out.print("Insert commissionPCT: ");
+        double commissionPCT_Insert = scan.nextDouble();
+        scan.nextLine();
+        System.out.print("Insert manager ID: ");
         int managerId_Insert = scan.nextInt();
         scan.nextLine();
-        System.out.print("Insert new Location ID: ");
-        int locationId_Insert = scan.nextInt();
+        System.out.print("Insert Department ID: ");
+        int departmentId_Insert = scan.nextInt();
         scan.nextLine();
 
-        ListOfDepartments();
-        boolean validasiInsert_DN = departmentListsStr.stream().anyMatch(departmentname_Insert::contains);
-        boolean validasiInsert_Did = departmentListsInt.stream().anyMatch(n -> (n == departmentId_Insert));
-
-        if (validasiInsert_Did == false) {
-            if (validasiInsert_DN == false && validasiInsert_Did == false) {
-                Department departmentInsert = new Department(departmentId_Insert, departmentname_Insert,
-                        managerId_Insert, locationId_Insert);
-                ddao.insert(departmentInsert);
-                System.out.println("a new Department successfully inserted");
-            } else if (validasiInsert_DN == true && validasiInsert_Did == false) {
-                System.out.println("Department Name already exists in the data base. Insert data is fail");
-            } else if (validasiInsert_DN == false && validasiInsert_Did == true) {
-                System.out.println("Department ID already exists in the data base. Insert data is fail");
-            } else if (validasiInsert_DN == true && validasiInsert_Did == true) {
-                System.out.println("Both Department Name and Department ID already exists in the data base. Insert data is fail");
-            }
+        ListOfEmployees();
+        boolean validasiStrEmail = employeeListsStr.stream().anyMatch(email_Insert::contains);
+        boolean validasiStrPhone = employeeListsStr.stream().anyMatch(phoneNumber_Insert::contains);
+        boolean validasiIntEmpId = employeeListsInt.stream().anyMatch(n -> (n == employeeId_Insert));
+       
+        if (validasiStrEmail == false && validasiStrPhone == false && validasiIntEmpId == false) {
+            Employee employeeInsert = new Employee(employeeId_Insert, firstName_Insert, lastName_Insert,
+                    email_Insert, phoneNumber_Insert, hireDateSQLFormat, jobTitle_Insert, salary_Insert,
+                    commissionPCT_Insert, managerId_Insert, departmentId_Insert);
+            edao.insert(employeeInsert);
         } else {
-            System.out.println("Department with ID of " + departmentId_Insert + " already exists in the database. Insert data is fail.");
+            System.out.println("Employee ID, Email, or Phone Number already exists in the database");
         }
     }
 
     @Override
     public void update() {
-        System.out.print("Department ID: ");
-        int departmentId_Update = scan.nextInt();
-        scan.nextLine();
-        System.out.println("Current data:\n" + ddao.getById(departmentId_Update));
-        System.out.print("new Department Name: ");
-        String departmentName_Update = scan.nextLine();
-        System.out.print("Insert Manager ID: ");
-        int managerId_Update = scan.nextInt();
-        scan.nextLine();
-        System.out.print("Insert Location ID: ");
-        int locationId_Update = scan.nextInt();
+        System.out.print("Job ID: ");
+        int employeeId_Update = scan.nextInt();
         scan.nextLine();
 
-        ListOfDepartments();
-        boolean validasiUpdate_DN = departmentListsStr.stream().anyMatch(departmentName_Update::contains);
+        ListOfEmployees();
+        boolean validasiEmployeeID = employeeListsInt.stream().anyMatch(n -> ((int) n == employeeId_Update));
 
-        if (validasiUpdate_DN == false || departmentName_Update.equals(ddao.getById(departmentId_Update).getDepartmentName())) {
-            Department updateDepartment = new Department(departmentId_Update, departmentName_Update,
-                    managerId_Update, locationId_Update);
-            ddao.update(departmentId_Update, updateDepartment);
+        if (validasiEmployeeID == true) {
+            System.out.println("Current data:\n" + edao.getById(employeeId_Update));
+            System.out.print("New Email: ");
+            String email_Update = scan.nextLine();
+            System.out.print("New Phone Number: ");
+            String phoneNumber_Update = scan.nextLine();
+            System.out.print("New Salary: ");
+            double salary_Update = scan.nextDouble();
+            scan.nextLine();
+            System.out.print("New Comission PCT: ");
+            double comissionPCT_Update = scan.nextDouble();
+            scan.nextLine();
+
+            Employee updateEmployee = new Employee(employeeId_Update,
+                    edao.getById(employeeId_Update).getFirstName(), edao.getById(employeeId_Update).getLastName(),
+                    email_Update, phoneNumber_Update, edao.getById(employeeId_Update).getHireDate(),
+                    edao.getById(employeeId_Update).getJobTitle(), salary_Update, comissionPCT_Update,
+                    edao.getById(employeeId_Update).getManagerId(), edao.getById(employeeId_Update).getDepartmentId());
+            edao.update(employeeId_Update, updateEmployee);
+
         } else {
-            System.out.println("Department already exists in the database");
+            System.out.println("Data do not exists in the database");
         }
     }
 
     @Override
     public void delete() {
-        System.out.print("Select department ID: ");
-        int departmentId_Delete = scan.nextInt();
+        System.out.print("Select Employee ID: ");
+        int employeeId_Delete = scan.nextInt();
         scan.nextLine();
-        System.out.println("Target data to delete:\n" + ddao.getById(departmentId_Delete));
-        System.out.print("Type department name to delete: ");
-        String departmenName_Delete = scan.nextLine();
 
-        ListOfDepartments();
-        boolean validasiDelete_N = departmentListsStr.stream().anyMatch(departmenName_Delete::contains);
+        ListOfEmployees();
+        boolean validasiDelete = employeeListsInt.stream().anyMatch(n -> (n == employeeId_Delete));
 
-        if (validasiDelete_N == true) {
-            ddao.delete(departmentId_Delete);
+        if (validasiDelete == true) {
+            System.out.println("Target data to delete:\n" + edao.getById(employeeId_Delete));
+            System.out.print("Type job_id again to delete: ");
+            int confirmDelete = scan.nextInt();
+            scan.nextLine();
+            edao.delete(confirmDelete);
             System.out.println("the data successfully deleted");
         } else {
             System.out.println("the data is not exist in the database");
         }
-    }
-
+    }       
     
 }
