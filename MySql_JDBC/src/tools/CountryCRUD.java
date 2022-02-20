@@ -11,13 +11,17 @@ public class CountryCRUD implements CRUD {
     DbConnection connection = new DbConnection();
     CountryDAO cdao = new CountryDAO(connection.getConncetion());
     Scanner scan = new Scanner(System.in);
-
+    List<String> countryLists = new ArrayList<>();
+    
+    public void ListOfCountries() {
+        cdao.getAll().forEach((i) -> countryLists.add(i.getCountryId() + i.getCountryName()));
+    }
+     
     @Override
     public void show() {
+        System.out.println("Country ID -- Country Name -- Region");
         for (Country country : cdao.getAll()) {
-            System.out.print(country.getCountryId() + " -- ");
-            System.out.print(country.getCountryName() + " -- ");
-            System.out.println(country.getRegionId());
+            System.out.println(country.getCountryId() + " -- " + country.getCountryName() + " -- " + country.getRegionId());
         }
     }
 
@@ -30,20 +34,15 @@ public class CountryCRUD implements CRUD {
         System.out.print("Insert region name: ");
         int regionId_Insert = scan.nextInt();
         scan.nextLine();
-        
-        List<String> countriesInsert = new ArrayList<>();
-        for (Country country : cdao.getAll()){
-            countriesInsert.add(country.getCountryId());
-            countriesInsert.add(country.getCountryName());
-        }
 
-        boolean validasiId = countriesInsert.stream().anyMatch(CountryId_Insert::contains);
-        boolean validasiName = countriesInsert.stream().anyMatch(countryName_Insert::contains);
-        
-        if (validasiName == false && validasiId == false){
+        ListOfCountries();
+        boolean validasiId = countryLists.stream().anyMatch(CountryId_Insert::contains);
+        boolean validasiName = countryLists.stream().anyMatch(countryName_Insert::contains);
+
+        if (validasiName == false && validasiId == false) {
             Country countryInsert = new Country(CountryId_Insert, countryName_Insert, regionId_Insert);
             cdao.insert(countryInsert);
-            System.out.println("new data successfully inserted");   
+            System.out.println("new data successfully inserted");
         } else if (validasiName == true && validasiId == false) {
             System.out.println(countryName_Insert + " already exists in the data base. Insert data is fail");
         } else if (validasiName == false && validasiId == true) {
@@ -61,18 +60,14 @@ public class CountryCRUD implements CRUD {
         System.out.println("previous regional id: " + cdao.getById(countryId_Update).getRegionId());
         System.out.print("Update country name: ");
         String countryName_Update = scan.nextLine();
-               
-         List<String> countriesUpdate = new ArrayList<>();
-        for (Country country : cdao.getAll()){
-            countriesUpdate.add(country.getCountryName());
-        }
-        
-        boolean validasi = countriesUpdate.stream().anyMatch(countryName_Update::contains);
-        
-        if (validasi == false){
+
+        ListOfCountries();
+        boolean validasi = countryLists.stream().anyMatch(countryName_Update::contains);
+
+        if (validasi == false) {
             Country updateCountry = new Country(countryId_Update, countryName_Update, cdao.getById(countryId_Update).getRegionId());
             cdao.update(countryId_Update, updateCountry);
-            System.out.println(countryName_Update + " successfully updated");   
+            System.out.println(countryName_Update + " successfully updated");
         } else {
             System.out.println(countryName_Update + " already exists");
         }
@@ -84,22 +79,18 @@ public class CountryCRUD implements CRUD {
         String countryId_Delete = scan.nextLine();
         System.out.print("Delete country name: ");
         String countryName_Delete = scan.nextLine();
-               
-         List<String> countriesDelete = new ArrayList<>();
-        for (Country country : cdao.getAll()){
-            countriesDelete.add(country.getCountryName());
-        }
-        
-        boolean validasi = countriesDelete.stream().anyMatch(countryName_Delete::contains);
-                
-        if ((validasi == true)){
-            if (countryName_Delete.equals(cdao.getById(countryId_Delete).getCountryName())){
+
+        ListOfCountries();
+        boolean validasi = countryLists.stream().anyMatch(countryName_Delete::contains);
+
+        if ((validasi == true)) {
+            if (countryName_Delete.equals(cdao.getById(countryId_Delete).getCountryName())) {
                 cdao.delete(countryId_Delete);
-                System.out.println(countryName_Delete + " successfully deleted");  
+                System.out.println(countryName_Delete + " successfully deleted");
             } else {
                 System.out.println("region name and id did not match");
-            }              
-        } else if ((validasi == false)){
+            }
+        } else if ((validasi == false)) {
             System.out.println(countryName_Delete + " is not exist in the database");
         }
     }
