@@ -1,2 +1,3 @@
 # MCC_CRUD-JDBC
-The project is not finished yet.
+An apps to create, read, update, and delete data from table that connected to the database server.
+Java programming language and MySQL is used for this project.
