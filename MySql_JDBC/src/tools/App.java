@@ -8,10 +8,10 @@ public class App {
         Scanner scan = new Scanner(System.in);        
         CRUD[] crud = {new RegionCRUD(), new CountryCRUD(), new LocationCRUD(), new DepartmentCRUD(), new JobCRUD(), new EmployeeCRUD()};
         int selection = -1;
-        String str1 = "Welcome to the db_hr database CRUD application\nType \"0\" to see the list of table you can access and \"7\" to quit the apps.";
+        String str1 = "Welcome to the db_hr database CRUD application\nType \"0\" to see the list of table you can access and type \"07\" to quit the apps.";
         System.out.println(str1);
         
-        while (selection != 7){
+        while (selection != 07){
             selection = scan.nextInt();
             scan.nextLine();
             switch(selection){
@@ -48,6 +48,9 @@ public class App {
                         System.out.print("Employee Table\n61. Show\n62. Insert\n63. Update\n64. Delete"
                                 + "\n\"Type the numbering of each concent to access and type \"6\" to see Employee table menu \"\n");
                         System.out.print("Type \"0\" to get you back into table list menu\n");
+                        break;
+                    case 07:
+                        System.out.print("Thank you for using this apps!\n");
                         break;
                         
                      // region table    
@@ -133,14 +136,7 @@ public class App {
                         System.out.print("There is no such selection exists, you will get back to the front menu\n"
                                 + "Welcome to the db_hr database CRUD application\nType \"0\" to see the list of table you can access.");
                 }                   
-            
-        }
-        
-        
-                
-
-        
-        
+        }  
     }   
 }
     
