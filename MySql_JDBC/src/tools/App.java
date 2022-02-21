@@ -17,7 +17,7 @@ public class App {
             switch(selection){
                     case 0:
                         System.out.print("Table lists:\n1. Region\n2. Country\n3. Location\n4. Department\n5. Job\n6. Employee"
-                                + "\n\"Type the numbering of each concent to access\"\n");
+                                + "\n\"Type the numbering of each content to access\"\n");
                         break;
                     case 1:
                         System.out.print("Region Table\n11. Show\n12. Insert\n13. Update\n14. Delete"
