@@ -100,6 +100,5 @@ public class JobCRUD implements CRUD {
         } else {
             System.out.println("the data is not exist in the database");
         }
-    }   
-   
+    }      
 }
